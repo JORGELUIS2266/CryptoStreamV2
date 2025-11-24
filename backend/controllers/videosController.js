@@ -1,3 +1,5 @@
+//backend/controllers/videosController.js
+
 const StellarSdk = require('stellar-sdk');
 const { videos, rewards } = require('../models/videoModel');
 
