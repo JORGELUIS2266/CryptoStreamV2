@@ -1,3 +1,4 @@
+//backend/models/videoModel.js
 // Modelo en memoria
 let videos = []; 
 let rewards = {};
