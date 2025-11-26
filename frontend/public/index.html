@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,7 +24,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .logo {
@@ -85,7 +86,7 @@
         .hero h1 {
             font-size: 3rem;
             margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .hero p {
@@ -113,7 +114,7 @@
             width: 90%;
             max-width: 500px;
             margin: 2rem auto;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .wallet-box h3 {
@@ -155,7 +156,7 @@
             background: white;
             padding: 1.5rem;
             border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
             display: none;
             z-index: 1000;
             min-width: 300px;
@@ -163,15 +164,31 @@
         }
 
         @keyframes slideIn {
-            from { transform: translateX(400px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
-        .notification.success { border-left: 4px solid #27ae60; }
-        .notification.error { border-left: 4px solid #e74c3c; }
+        .notification.success {
+            border-left: 4px solid #27ae60;
+        }
 
+        .notification.error {
+            border-left: 4px solid #e74c3c;
+        }
+
+        .notification.info {
+            border-left: 4px solid #3498db;
+        }
     </style>
 </head>
+
 <body>
 
     <nav class="navbar">
@@ -199,35 +216,123 @@
         <h3>Ingresa tu Clave Pública (Stellar)</h3>
         <input type="text" id="publicKey" class="wallet-input" placeholder="Ejemplo: GCFK...PZTJ" maxlength="56">
         <button class="btn-enter" onclick="login()">Entrar 🚀</button>
+
+        <div style="margin-top: 1.5rem; border-top: 1px solid #eee; padding-top: 1.5rem;">
+            <h4 style="color: #667eea; margin-bottom: 1rem;">O usa Passkey (Biometría)</h4>
+            <div style="display: flex; gap: 0.5rem; flex-direction: column;">
+                <button class="btn-enter" style="background: #27ae60;" onclick="loginPasskey()">🔑 Entrar con
+                    Passkey</button>
+                <button class="btn-enter" style="background: #e67e22;" onclick="createPasskeyWallet()">✨ Crear Wallet
+                    con Passkey</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registration Modal -->
+    <div id="regModal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; align-items:center; justify-content:center;">
+        <div style="background:white; padding:2rem; border-radius:15px; width:90%; max-width:400px; text-align:center;">
+            <h2 style="color:#667eea; margin-bottom:1rem;">¡Bienvenido! 🌟</h2>
+            <p style="margin-bottom:1.5rem; color:#666;">Crea tu perfil para que todos te conozcan.</p>
+
+            <input id="regName" class="wallet-input" placeholder="Tu Nombre o Nickname">
+            <input id="regBio" class="wallet-input" placeholder="Una breve bio (opcional)">
+
+            <button class="btn-enter" onclick="completeRegistration()">Guardar Perfil</button>
+        </div>
     </div>
 
     <div class="notification" id="notification"></div>
 
-<script>
-function login() {
-    const key = document.getElementById('publicKey').value.trim();
+    <script type="module">
+        import { registerPasskey, authenticatePasskey } from '../js/passkey.js';
 
-    if (key.length !== 56 || !key.startsWith("G")) {
-        showNotification("❌ Clave pública inválida", "error");
-        return;
-    }
+        window.login = function () {
+            const key = document.getElementById('publicKey').value.trim();
 
-    localStorage.setItem("stellarPublicKey", key);
-    showNotification("✅ Clave aceptada, entrando...", "success");
+            if (key.length !== 56 || !key.startsWith("G")) {
+                showNotification("❌ Clave pública inválida", "error");
+                return;
+            }
 
-    setTimeout(() => {
-        window.location.href = "video.html";
-    }, 1200);
-}
+            localStorage.setItem("stellarPublicKey", key);
 
-function showNotification(message, type) {
-    const n = document.getElementById("notification");
-    n.textContent = message;
-    n.className = "notification " + type;
-    n.style.display = "block";
-    setTimeout(() => n.style.display = "none", 4000);
-}
-</script>
+            // Check profile
+            checkProfileAndRedirect(key);
+        };
+
+        window.loginPasskey = async function () {
+            showNotification("👆 Usa tu huella o FaceID...", "info");
+            const result = await authenticatePasskey();
+
+            if (result.success) {
+                const stored = JSON.parse(localStorage.getItem("passkey-credentials") || "[]");
+                const cred = stored.find(c => c.credentialId === result.credentialId);
+                const mockAddress = cred?.walletAddress || "G" + result.credentialId.substring(0, 55).toUpperCase().padEnd(55, 'X');
+
+                localStorage.setItem("stellarPublicKey", mockAddress);
+                showNotification("✅ Autenticado con Passkey!", "success");
+
+                checkProfileAndRedirect(mockAddress);
+            } else {
+                showNotification("❌ Error: " + result.error, "error");
+            }
+        };
+
+        window.createPasskeyWallet = async function () {
+            const username = prompt("Elige un nombre de usuario para tu Passkey Wallet:");
+            if (!username) return;
+
+            showNotification("👆 Crea tu Passkey...", "info");
+            const result = await registerPasskey(username);
+
+            if (result.success) {
+                showNotification("✅ Passkey creado! Ahora puedes entrar.", "success");
+            } else {
+                showNotification("❌ Error: " + result.error, "error");
+            }
+        };
+
+        window.completeRegistration = function () {
+            const name = document.getElementById('regName').value.trim();
+            const bio = document.getElementById('regBio').value.trim();
+            const key = localStorage.getItem("stellarPublicKey");
+
+            if (!name) return alert("El nombre es obligatorio");
+
+            // Save profile locally (simulating contract storage)
+            const profiles = JSON.parse(localStorage.getItem("userProfiles") || "{}");
+            profiles[key] = { name, bio };
+            localStorage.setItem("userProfiles", JSON.stringify(profiles));
+
+            showNotification("✅ Perfil creado! Entrando...", "success");
+            setTimeout(() => {
+                window.location.href = "video.html";
+            }, 1200);
+        };
+
+        function checkProfileAndRedirect(key) {
+            const profiles = JSON.parse(localStorage.getItem("userProfiles") || "{}");
+            if (!profiles[key]) {
+                // Show registration modal
+                document.getElementById('regModal').style.display = 'flex';
+            } else {
+                showNotification("✅ Entrando...", "success");
+                setTimeout(() => {
+                    window.location.href = "video.html";
+                }, 1200);
+            }
+        }
+
+        function showNotification(message, type) {
+            const n = document.getElementById("notification");
+            n.textContent = message;
+            n.className = "notification " + type;
+            n.style.display = "block";
+            setTimeout(() => n.style.display = "none", 4000);
+        }
+    </script>
 
 </body>
+
 </html>
