@@ -175,6 +175,11 @@ const UIController = {
             const isPurchased = videoManager.isPurchased(video);
             const div = document.createElement('div');
             div.className = 'video-card';
+
+            // URL para compartir (en producción sería la URL real)
+            const shareUrl = window.location.origin + '/video.html?id=' + video.id;
+            const shareText = `¡Mira este video en CryptoStream! ${video.title}`;
+
             div.innerHTML = `
                 <div class="video-thumbnail" onclick="app.handleVideoClick(${video.id})">
                     <span>${video.emoji || '🎬'}</span>
@@ -186,7 +191,8 @@ const UIController = {
                         <span>⏱️ ${Math.floor((video.duration || 0) / 60)}:${String((video.duration || 0) % 60).padStart(2, '0')}</span>
                         <span>📁 ${video.category || '-'}</span>
                     </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                    
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
                         <div class="reward-badge" style="background: ${isPurchased ? '#27ae60' : '#f39c12'}">
                             ${isPurchased ? '✅ Disponible' : '💰 ' + video.reward + ' XLM'}
                         </div>
@@ -194,6 +200,19 @@ const UIController = {
                         <div style="display:flex;gap:8px;">
                             <button class="small-btn btn-delete" onclick="app.deleteVideo(${video.id})">🗑️</button>
                         </div>` : ''}
+                    </div>
+
+                    <!-- Botones de compartir -->
+                    <div class="share-buttons" style="display:flex;gap:0.5rem;border-top:1px solid rgba(255,255,255,0.1);padding-top:1rem;">
+                        <button class="share-btn whatsapp" onclick="app.shareVideo('whatsapp', '${video.id}', '${video.title}')" title="Compartir en WhatsApp">
+                            📱
+                        </button>
+                        <button class="share-btn twitter" onclick="app.shareVideo('twitter', '${video.id}', '${video.title}')" title="Compartir en X">
+                            🐦
+                        </button>
+                        <button class="share-btn copy" onclick="app.shareVideo('copy', '${video.id}', '${video.title}')" title="Copiar enlace">
+                            🔗
+                        </button>
                     </div>
                 </div>
             `;

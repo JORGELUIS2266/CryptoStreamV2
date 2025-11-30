@@ -208,6 +208,36 @@
             font-weight: bold;
         }
 
+        /* Share Buttons */
+        .share-btn {
+            flex: 1;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: transform 0.2s, background 0.2s;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .share-btn:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .share-btn.whatsapp:hover {
+            background: #25D366;
+        }
+
+        .share-btn.twitter:hover {
+            background: #1DA1F2;
+        }
+
+        .share-btn.copy:hover {
+            background: #667eea;
+        }
+
         /* Forms */
         .input {
             width: 100%;
@@ -392,6 +422,7 @@
                 <button class="tab-btn" data-section="account">Mi cuenta</button>
                 <button class="tab-btn" data-section="transactions">Transacciones</button>
                 <button class="tab-btn" data-section="reels">📱 Reels</button>
+                <button class="tab-btn" data-section="addVideo">➕ Subir Video</button>
                 <button class="tab-btn" data-section="myVideos">Mis videos</button>
             </div>
 
@@ -494,6 +525,64 @@
                 <div id="reelsContainer" class="reel-container"></div>
             </div>
 
+            <!-- Add Video Section -->
+            <div id="addVideo" class="section">
+                <h2>➕ Subir Nuevo Video</h2>
+                <p class="muted" style="margin-bottom: 2rem;">Sube tus videos a IPFS y monetízalos con Stellar.</p>
+
+                <div style="max-width: 800px; background: rgba(255,255,255,0.05); padding: 2rem; border-radius: 15px;">
+                    <label>Título del Video</label>
+                    <input id="videoTitleInput" class="input" placeholder="Ej: Tutorial de Stellar">
+
+                    <label>Archivo de Video</label>
+                    <div style="border: 2px dashed #667eea; padding: 2rem; text-align: center; border-radius: 10px; margin-bottom: 1rem; cursor: pointer;"
+                        onclick="document.getElementById('videoFileInput').click()">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📁</div>
+                        <p>Haz click para seleccionar o arrastra tu video aquí</p>
+                        <p class="muted" id="fileNameDisplay">Ningún archivo seleccionado</p>
+                    </div>
+                    <input type="file" id="videoFileInput" accept="video/*" style="display: none;"
+                        onchange="app.handleFileSelect(this)">
+
+                    <!-- Progress Bar -->
+                    <div id="uploadProgress" style="display: none; margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Subiendo a IPFS...</span>
+                            <span id="uploadPercent">0%</span>
+                        </div>
+                        <div
+                            style="height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden;">
+                            <div id="progressBar"
+                                style="height: 100%; width: 0%; background: #27ae60; transition: width 0.3s;"></div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                        <div style="flex: 1;">
+                            <label>Categoría</label>
+                            <input id="videoCategoryInput" class="input" placeholder="Ej: Educación">
+                        </div>
+                        <div style="flex: 1;">
+                            <label>Precio (XLM)</label>
+                            <input id="videoRewardInput" type="number" step="0.1" class="input" placeholder="0.0">
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-bottom: 2rem; align-items: center;">
+                        <div style="flex: 1;">
+                            <label>Emoji</label>
+                            <input id="videoEmojiInput" class="input" placeholder="🎬" value="🎬">
+                        </div>
+                        <div style="flex: 1; display: flex; align-items: center; gap: 0.5rem; padding-top: 1.5rem;">
+                            <input type="checkbox" id="isReelInput" style="width: 20px; height: 20px;">
+                            <label for="isReelInput" style="margin: 0; cursor: pointer;">Es un Reel (Vertical)</label>
+                        </div>
+                    </div>
+
+                    <button id="btnUpload" class="btn-enter" onclick="app.uploadVideo()">🚀 Subir y Publicar</button>
+                </div>
+            </div>
+
             <!-- My Videos Section -->
             <div id="myVideos" class="section">
                 <h2>📁 Mis videos</h2>
@@ -522,12 +611,14 @@
     <script src="js/passkey-auth.js"></script>
     <script src="js/stellar-wallet.js"></script>
     <script src="js/video-manager.js"></script>
+    <script src="js/upload-manager.js"></script>
     <script src="js/ui-controller.js"></script>
 
     <script>
         // Aplicación principal
         const app = {
             user: null,
+            selectedFile: null,
 
             async init() {
                 // Verificar autenticación
@@ -615,6 +706,110 @@
                 }
             },
 
+            handleFileSelect(input) {
+                const file = input.files[0];
+                if (!file) return;
+
+                try {
+                    UploadManager.validateVideoFile(file);
+                    this.selectedFile = file;
+                    document.getElementById('fileNameDisplay').textContent = `${file.name} (${UploadManager.formatFileSize(file.size)})`;
+                    document.getElementById('fileNameDisplay').style.color = '#27ae60';
+                    document.getElementById('fileNameDisplay').style.fontWeight = 'bold';
+                } catch (error) {
+                    UIController.notify(error.message, 'error');
+                    input.value = '';
+                    this.selectedFile = null;
+                    document.getElementById('fileNameDisplay').textContent = 'Ningún archivo seleccionado';
+                    document.getElementById('fileNameDisplay').style.color = '#bbb';
+                }
+            },
+
+            async uploadVideo() {
+                if (!this.selectedFile) {
+                    UIController.notify('Selecciona un video primero', 'error');
+                    return;
+                }
+
+                const title = document.getElementById('videoTitleInput').value.trim();
+                const category = document.getElementById('videoCategoryInput').value.trim();
+                const reward = document.getElementById('videoRewardInput').value.trim();
+                const emoji = document.getElementById('videoEmojiInput').value.trim();
+                const isReel = document.getElementById('isReelInput').checked;
+
+                if (!title) {
+                    UIController.notify('Ingresa un título para el video', 'error');
+                    return;
+                }
+
+                // Mostrar progreso
+                document.getElementById('uploadProgress').style.display = 'block';
+                document.getElementById('btnUpload').disabled = true;
+                document.getElementById('btnUpload').style.opacity = '0.5';
+
+                try {
+                    UIController.notify('📤 Subiendo video a IPFS...', 'info');
+
+                    // 1. Subir a IPFS
+                    const uploadResult = await UploadManager.uploadVideo(this.selectedFile, (percent) => {
+                        document.getElementById('progressBar').style.width = `${percent}%`;
+                        document.getElementById('uploadPercent').textContent = `${percent}%`;
+                    });
+
+                    UIController.notify('✅ Video subido a IPFS. Guardando metadata...', 'success');
+
+                    // 2. Guardar metadata en backend
+                    const videoData = {
+                        url: uploadResult.url,
+                        ipfsHash: uploadResult.ipfsHash,
+                        title: title,
+                        category: category || 'General',
+                        reward: parseFloat(reward) || 0,
+                        emoji: emoji || '🎬',
+                        isReel: isReel,
+                        ownerPublicKey: this.user.publicKey,
+                        duration: 0
+                    };
+
+                    const response = await fetch(`${Config.getApiUrl()}/add`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(videoData)
+                    });
+
+                    if (!response.ok) throw new Error('Error al guardar video');
+
+                    UIController.notify('🎉 ¡Video publicado exitosamente!', 'success');
+
+                    // Limpiar formulario
+                    this.selectedFile = null;
+                    document.getElementById('videoFileInput').value = '';
+                    document.getElementById('videoTitleInput').value = '';
+                    document.getElementById('fileNameDisplay').textContent = 'Ningún archivo seleccionado';
+                    document.getElementById('uploadProgress').style.display = 'none';
+                    document.getElementById('progressBar').style.width = '0%';
+                    document.getElementById('btnUpload').disabled = false;
+                    document.getElementById('btnUpload').style.opacity = '1';
+
+                    // Recargar videos
+                    await VideoManager.loadVideos(Config.getApiUrl());
+                    UIController.renderVideosGrid(VideoManager);
+                    UIController.renderReels(VideoManager);
+                    UIController.renderMyVideosTable(VideoManager);
+                    UIController.updateStats(VideoManager);
+
+                    // Ir a la pestaña de mis videos
+                    document.querySelector('[data-section="myVideos"]').click();
+
+                } catch (error) {
+                    console.error('Error en upload:', error);
+                    UIController.notify('Error al subir video: ' + error.message, 'error');
+                    document.getElementById('uploadProgress').style.display = 'none';
+                    document.getElementById('btnUpload').disabled = false;
+                    document.getElementById('btnUpload').style.opacity = '1';
+                }
+            },
+
             handleVideoClick(videoId) {
                 const video = VideoManager.getVideoById(videoId);
                 if (!video) return;
@@ -663,6 +858,27 @@
                     UIController.renderMyVideosTable(VideoManager);
                 } catch (error) {
                     UIController.notify(error.message, 'error');
+                }
+            },
+
+            shareVideo(platform, videoId, title) {
+                const url = window.location.origin + window.location.pathname + '?video=' + videoId;
+                const text = `¡Mira este video en CryptoStream! ${title}`;
+
+                switch (platform) {
+                    case 'whatsapp':
+                        window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`, '_blank');
+                        break;
+                    case 'twitter':
+                        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+                        break;
+                    case 'copy':
+                        navigator.clipboard.writeText(url).then(() => {
+                            UIController.notify('📋 Enlace copiado', 'success');
+                        }).catch(() => {
+                            UIController.notify('Error al copiar', 'error');
+                        });
+                        break;
                 }
             },
 
