@@ -1,6 +1,6 @@
 #![no_std]
 
-use soroban_sdk::{contract, contractimpl, Env, Address, Map, String, Vec, Symbol, symbol_short};
+use soroban_sdk::{contract, contractimpl, contracttype, Env, Address, Map, String, Vec, Symbol, symbol_short};
 
 #[contract]
 pub struct CryptoStream;
@@ -8,6 +8,14 @@ pub struct CryptoStream;
 // Keys del storage
 const VIDEOS: Symbol = symbol_short!("videos");
 const REWARDS: Symbol = symbol_short!("rewards");
+const USERS: Symbol = symbol_short!("users");
+
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct UserProfile {
+    pub name: String,
+    pub bio: String,
+}
 
 #[contractimpl]
 impl CryptoStream {
@@ -72,5 +80,24 @@ impl CryptoStream {
         let rewards: Map<Address, i128> =
             env.storage().instance().get(&REWARDS).unwrap_or(Map::new(&env));
         rewards.get(user).unwrap_or(0)
+    }
+
+    // Registro de Usuarios
+    pub fn register_user(env: Env, user: Address, name: String, bio: String) {
+        user.require_auth();
+
+        let mut users: Map<Address, UserProfile> =
+            env.storage().instance().get(&USERS).unwrap_or(Map::new(&env));
+        
+        let profile = UserProfile { name, bio };
+        users.set(user, profile);
+        
+        env.storage().instance().set(&USERS, &users);
+    }
+
+    pub fn get_user(env: Env, user: Address) -> Option<UserProfile> {
+        let users: Map<Address, UserProfile> =
+            env.storage().instance().get(&USERS).unwrap_or(Map::new(&env));
+        users.get(user)
     }
 }
