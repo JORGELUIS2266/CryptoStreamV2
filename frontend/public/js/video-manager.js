@@ -64,7 +64,9 @@ const VideoManager = {
      */
     async loadVideos(backendUrl) {
         try {
-            const response = await fetch(backendUrl);
+            // Si no se pasa URL, usar la de config
+            const url = backendUrl || Config.getVideosUrl();
+            const response = await fetch(url);
             const videos = await response.json();
             this.videos = Array.isArray(videos) ? videos : [];
 
@@ -155,7 +157,8 @@ const VideoManager = {
         }
 
         try {
-            const response = await fetch(`${backendUrl}/${videoId}`, {
+            const url = backendUrl || Config.getVideosUrl();
+            const response = await fetch(`${url}/${videoId}`, {
                 method: 'DELETE'
             });
 

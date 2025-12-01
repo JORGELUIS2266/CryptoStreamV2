@@ -42,7 +42,7 @@ const UploadManager = {
                 });
 
                 // Configurar y enviar
-                xhr.open('POST', `${Config.getApiUrl().replace('/videos', '')}/upload`);
+                xhr.open('POST', Config.getUploadUrl());
                 xhr.timeout = 300000; // 5 minutos
                 xhr.send(formData);
             });

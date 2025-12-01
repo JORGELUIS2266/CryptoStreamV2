@@ -209,6 +209,14 @@
         }
 
         /* Share Buttons */
+        .share-buttons {
+            display: flex;
+            gap: 0.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+
         .share-btn {
             flex: 1;
             padding: 0.5rem;
@@ -660,7 +668,7 @@
                     UIController.updatePasskeyStatus(this.user.publicKey);
 
                     // Cargar videos
-                    await VideoManager.loadVideos(Config.getApiUrl());
+                    await VideoManager.loadVideos(Config.getVideosUrl());
 
                     // Renderizar
                     UIController.renderVideosGrid(VideoManager);
@@ -771,7 +779,7 @@
                         duration: 0
                     };
 
-                    const response = await fetch(`${Config.getApiUrl()}/add`, {
+                    const response = await fetch(`${Config.getVideosUrl()}/add`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(videoData)
@@ -792,7 +800,7 @@
                     document.getElementById('btnUpload').style.opacity = '1';
 
                     // Recargar videos
-                    await VideoManager.loadVideos(Config.getApiUrl());
+                    await VideoManager.loadVideos(Config.getVideosUrl());
                     UIController.renderVideosGrid(VideoManager);
                     UIController.renderReels(VideoManager);
                     UIController.renderMyVideosTable(VideoManager);
@@ -852,7 +860,7 @@
                 if (!confirm('¿Estás seguro de eliminar este video?')) return;
 
                 try {
-                    await VideoManager.deleteVideo(videoId, Config.getApiUrl());
+                    await VideoManager.deleteVideo(videoId, Config.getVideosUrl());
                     UIController.notify('✅ Video eliminado', 'success');
                     UIController.renderVideosGrid(VideoManager);
                     UIController.renderMyVideosTable(VideoManager);

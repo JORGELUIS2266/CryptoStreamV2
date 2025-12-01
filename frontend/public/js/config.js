@@ -12,15 +12,29 @@ const Config = {
     NETWORK: 'TESTNET', // Cambiar a 'MAINNET' para producción
 
     /**
-     * Obtener URL del backend según el entorno
+     * Obtener URL base de la API
      */
-    getApiUrl() {
+    getApiBaseUrl() {
         // Si estamos en localhost, usar dev
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            return this.BACKEND_URL_DEV;
+            return 'http://localhost:3000/api';
         }
-        // En producción, usar prod
-        return this.BACKEND_URL_PROD;
+        // En producción, usar prod (Railway)
+        return 'https://believable-playfulness-production.up.railway.app/api';
+    },
+
+    /**
+     * Obtener URL de videos
+     */
+    getVideosUrl() {
+        return `${this.getApiBaseUrl()}/videos`;
+    },
+
+    /**
+     * Obtener URL de upload
+     */
+    getUploadUrl() {
+        return `${this.getApiBaseUrl()}/upload`;
     },
 
     /**
