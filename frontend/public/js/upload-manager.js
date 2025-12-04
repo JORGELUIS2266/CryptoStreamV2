@@ -1,89 +1,48 @@
-// frontend/public/js/upload-manager.js
-// Gestor de subida de videos a IPFS
+// frontend/public/js/upload-manager-simple.js
+// Gestor simplificado - solo valida URLs
 
 const UploadManager = {
     /**
-     * Subir video a IPFS vía backend
+     * Validar URL de video
      */
-    async uploadVideo(file, onProgress) {
-        const formData = new FormData();
-        formData.append('video', file);
+    validateVideoUrl(url) {
+        if (!url) {
+            throw new Error('No se ingresó ninguna URL');
+        }
 
         try {
-            const xhr = new XMLHttpRequest();
+            const urlObj = new URL(url);
+            
+            // Verificar que sea http o https
+            if (!['http:', 'https:'].includes(urlObj.protocol)) {
+                throw new Error('La URL debe comenzar con http:// o https://');
+            }
 
-            return new Promise((resolve, reject) => {
-                // Progreso de subida
-                xhr.upload.addEventListener('progress', (e) => {
-                    if (e.lengthComputable) {
-                        const percentComplete = Math.round((e.loaded / e.total) * 100);
-                        if (onProgress) onProgress(percentComplete);
-                    }
-                });
-
-                // Completado
-                xhr.addEventListener('load', () => {
-                    if (xhr.status === 200) {
-                        const response = JSON.parse(xhr.responseText);
-                        resolve(response);
-                    } else {
-                        reject(new Error(`Error ${xhr.status}: ${xhr.statusText}`));
-                    }
-                });
-
-                // Error
-                xhr.addEventListener('error', () => {
-                    reject(new Error('Error de red al subir archivo'));
-                });
-
-                // Timeout
-                xhr.addEventListener('timeout', () => {
-                    reject(new Error('Timeout al subir archivo'));
-                });
-
-                // Configurar y enviar
-                xhr.open('POST', Config.getUploadUrl());
-                xhr.timeout = 300000; // 5 minutos
-                xhr.send(formData);
-            });
-
-        } catch (error) {
-            console.error('Error en uploadVideo:', error);
-            throw error;
+            return true;
+        } catch (e) {
+            throw new Error('La URL ingresada no es válida');
         }
     },
 
     /**
-     * Validar archivo de video
+     * Detectar tipo de plataforma de video
      */
-    validateVideoFile(file) {
-        const maxSize = 100 * 1024 * 1024; // 100MB
-        const allowedTypes = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime', 'video/x-msvideo'];
-
-        if (!file) {
-            throw new Error('No se seleccionó ningún archivo');
+    detectPlatform(url) {
+        const urlLower = url.toLowerCase();
+        
+        if (urlLower.includes('youtube.com') || urlLower.includes('youtu.be')) {
+            return 'YouTube';
+        } else if (urlLower.includes('vimeo.com')) {
+            return 'Vimeo';
+        } else if (urlLower.includes('drive.google.com')) {
+            return 'Google Drive';
+        } else if (urlLower.includes('dropbox.com')) {
+            return 'Dropbox';
+        } else if (urlLower.includes('ipfs.io') || urlLower.includes('gateway.pinata.cloud')) {
+            return 'IPFS';
         }
-
-        if (!allowedTypes.includes(file.type)) {
-            throw new Error('Tipo de archivo no permitido. Usa: MP4, WebM, OGG, MOV, AVI');
-        }
-
-        if (file.size > maxSize) {
-            throw new Error('El archivo es demasiado grande. Máximo: 100MB');
-        }
-
-        return true;
-    },
-
-    /**
-     * Formatear tamaño de archivo
-     */
-    formatFileSize(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        
+        return 'Otro';
     }
 };
 

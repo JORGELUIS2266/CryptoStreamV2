@@ -1,0 +1,84 @@
+// NUEVA FUNCIÓN uploadVideo PARA video.html
+// Reemplaza la función uploadVideo completa (líneas 736-819)
+
+async uploadVideo() {
+    const title = document.getElementById('videoTitleInput').value.trim();
+    const videoUrl = document.getElementById('videoUrlInput').value.trim();
+    const category = document.getElementById('videoCategoryInput').value.trim();
+    const reward = document.getElementById('videoRewardInput').value.trim();
+    const emoji = document.getElementById('videoEmojiInput').value.trim();
+    const isReel = document.getElementById('isReelInput').checked;
+
+    if (!title) {
+        UIController.notify('Ingresa un título para el video', 'error');
+        return;
+    }
+
+    if (!videoUrl) {
+        UIController.notify('Ingresa la URL del video', 'error');
+        return;
+    }
+
+    // Validar que sea una URL válida
+    try {
+        new URL(videoUrl);
+    } catch (e) {
+        UIController.notify('La URL ingresada no es válida', 'error');
+        return;
+    }
+
+    document.getElementById('btnUpload').disabled = true;
+    document.getElementById('btnUpload').style.opacity = '0.5';
+
+    try {
+        UIController.notify('📤 Guardando video...', 'info');
+
+        // Guardar metadata en backend
+        const videoData = {
+            url: videoUrl,
+            title: title,
+            category: category || 'General',
+            reward: parseFloat(reward) || 0,
+            emoji: emoji || '🎬',
+            isReel: isReel,
+            ownerPublicKey: this.user.publicKey,
+            duration: 0
+        };
+
+        const response = await fetch(`${Config.getVideosUrl()}/add`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(videoData)
+        });
+
+        if (!response.ok) throw new Error('Error al guardar video');
+
+        UIController.notify('🎉 ¡Video publicado exitosamente!', 'success');
+
+        // Limpiar formulario
+        document.getElementById('videoUrlInput').value = '';
+        document.getElementById('videoTitleInput').value = '';
+        document.getElementById('videoCategoryInput').value = '';
+        document.getElementById('videoRewardInput').value = '';
+        document.getElementById('videoEmojiInput').value = '🎬';
+        document.getElementById('isReelInput').checked = false;
+        document.getElementById('btnUpload').disabled = false;
+        document.getElementById('btnUpload').style.opacity = '1';
+
+        // Recargar videos
+        await VideoManager.loadVideos(Config.getVideosUrl());
+        UIController.renderVideosGrid(VideoManager);
+        UIController.renderReels(VideoManager);
+        UIController.renderMyVideosTable(VideoManager);
+        UIController.updateStats(VideoManager);
+
+        // Ir a la pestaña de mis videos
+        document.querySelector('[data-section="myVideos"]').click();
+
+    } catch (error) {
+        console.error('Error al publicar video:', error);
+        UIController.notify('Error al publicar video', 'error');
+        document.getElementById('btnUpload').disabled = false;
+        document.getElementById('btnUpload').style.opacity = '1';
+    }
+},

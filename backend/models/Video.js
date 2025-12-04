@@ -11,9 +11,8 @@ const VideoSchema = new mongoose.Schema({
     },
     url: {
         type: String,
-        required: true
+        required: [true, 'La URL es obligatoria']
     },
-    ipfsHash: String,
     category: {
         type: String,
         default: 'General'
@@ -32,7 +31,7 @@ const VideoSchema = new mongoose.Schema({
     },
     ownerPublicKey: {
         type: String,
-        required: true
+        required: [true, 'El propietario es obligatorio']
     },
     duration: {
         type: Number,
@@ -43,9 +42,5 @@ const VideoSchema = new mongoose.Schema({
         default: Date.now
     }
 });
-
-// Auto-increment ID logic could be handled here or in controller.
-// For simplicity and migration, we'll handle ID generation in the controller
-// by finding the max ID + 1.
 
 module.exports = mongoose.model('Video', VideoSchema);

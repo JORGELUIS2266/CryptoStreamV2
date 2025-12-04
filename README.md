@@ -1,204 +1,196 @@
-# 🎬 CryptoStream - dApp de Videos con Stellar
+# 📺 CryptoStream - Plataforma de Videos Descentralizada
 
-Una aplicación descentralizada (dApp) para compartir y monetizar videos usando la blockchain de Stellar.
+> 🚀 **¿Primera vez aquí?** Lee [INDICE.md](INDICE.md) para empezar  
+> 📋 **¿Listo para desplegar?** Sigue [GUIA_DESPLIEGUE_COMPLETA.md](GUIA_DESPLIEGUE_COMPLETA.md)  
+> ⚠️ **¿Necesitas modificar código?** Ver [CAMBIOS_PENDIENTES.md](CAMBIOS_PENDIENTES.md)
 
-## ✨ Características
+Una plataforma de videos monetizada con **Stellar** y almacenamiento mediante enlaces.
 
-- 💰 **Pagos Reales en Stellar**: Transacciones verificables en Stellar Testnet
-- 🔐 **Autenticación con Passkey**: Login biométrico (huella/FaceID)
-- 🎬 **Videos Premium**: Sistema de pago por video con blockchain
-- 📱 **Reels Verticales**: Formato de videos cortos
-- 🌐 **Descentralizado**: Sin intermediarios, pagos directos entre usuarios
-- 🔑 **Firma con Clave Privada**: Control total de tus fondos
+## 🌟 Características
 
-## 🏗️ Arquitectura
+- ✅ **Autenticación sin contraseñas** con Passkeys (biométrico)
+- ✅ **Pagos con Stellar** (XLM)
+- ✅ **Videos mediante URLs** (YouTube, Vimeo, Google Drive, etc.)
+- ✅ **Base de datos MongoDB** para metadata
+- ✅ **Reels** (videos verticales)
+- ✅ **Compartir en redes sociales**
 
-### Frontend (Netlify)
-- HTML/CSS/JavaScript puro
-- Módulos separados para mejor organización
-- Stellar SDK para interacción con blockchain
-
-### Backend (Railway/Render)
-- Node.js + Express
-- API REST para metadata de videos
-- Persistencia en archivo JSON
-
-### Blockchain
-- Stellar Testnet para transacciones
-- Pagos directos entre usuarios
-- Verificación en Stellar Explorer
-
-## 📁 Estructura del Proyecto
-
-```
-Cryptostream/
-├── frontend/
-│   └── public/
-│       ├── index.html              # Login/Registro
-│       ├── video.html              # Dashboard principal
-│       └── js/
-│           ├── config.js           # Configuración
-│           ├── user-identity.js    # Gestión de usuarios
-│           ├── passkey-auth.js     # Autenticación Passkey
-│           ├── stellar-wallet.js   # Manejo de billetera
-│           ├── video-manager.js    # Gestión de videos
-│           └── ui-controller.js    # Controlador de UI
-├── backend/
-│   ├── index.js                    # Servidor Express
-│   ├── routes/
-│   │   └── videos.js               # Rutas de videos
-│   └── controllers/
-│       └── videosController.js     # Lógica de videos
-├── netlify.toml                    # Config de Netlify
-└── README.md
-```
-
-## 🚀 Instalación Local
-
-### Prerrequisitos
-- Node.js 16+
-- Cuenta Stellar Testnet ([crear aquí](https://laboratory.stellar.org/#account-creator?network=test))
+## 🚀 Tecnologías
 
 ### Backend
+- Node.js + Express
+- MongoDB (Mongoose)
+- Stellar SDK
+- CORS habilitado
 
+### Frontend
+- HTML5 + CSS3 + JavaScript vanilla
+- Stellar SDK
+- WebAuthn (Passkeys)
+- Responsive design
+
+## 📦 Instalación Local
+
+### 1. Clonar repositorio
+```bash
+git clone https://github.com/TU_USUARIO/CryptostreamV2.git
+cd CryptostreamV2
+```
+
+### 2. Configurar Backend
 ```bash
 cd backend
 npm install
+```
+
+Crea un archivo `.env` basado en `.env.example`:
+```env
+MONGODB_URI=mongodb+srv://usuario:password@cluster.mongodb.net/cryptostream
+PORT=3000
+STELLAR_NETWORK=TESTNET
+```
+
+### 3. Iniciar Backend
+```bash
 npm start
 ```
 
-El backend estará en `http://localhost:3000`
+### 4. Abrir Frontend
+Abre `frontend/public/index.html` en tu navegador.
 
-### Frontend
+## 🌐 Despliegue
 
-Usa Live Server o cualquier servidor HTTP estático:
+Ver la guía completa en `GUIA_DESPLIEGUE_COMPLETA.md`
 
-```bash
-cd frontend/public
-# Con Live Server (VS Code)
-# O con Python:
-python -m http.server 5500
-```
+### Railway (Backend)
+1. Conecta tu repositorio de GitHub
+2. Configura variables de entorno
+3. Despliega automáticamente
 
-El frontend estará en `http://localhost:5500`
+### Netlify (Frontend)
+1. Base directory: `frontend`
+2. Publish directory: `public`
+3. Despliega automáticamente
 
-## 🌐 Deployment
+## 📖 Uso
 
-### Frontend en Netlify
+### Para Usuarios
+1. Crea una cuenta con Passkey (huella/FaceID)
+2. Importa tu clave privada de Stellar
+3. Navega y compra videos con XLM
 
-1. Conecta tu repositorio de GitHub a Netlify
-2. Configuración de build:
-   - **Build command**: `echo 'No build needed'`
-   - **Publish directory**: `frontend/public`
-3. Deploy!
-
-### Backend en Railway
-
-1. Crea un nuevo proyecto en [Railway.app](https://railway.app)
-2. Conecta tu repositorio de GitHub
-3. Configuración:
-   - **Root directory**: `backend`
-   - **Start command**: `npm start`
-4. Copia la URL del deploy
-5. Actualiza `BACKEND_URL_PROD` en `frontend/public/js/config.js`
-
-## 🔑 Uso
-
-### 1. Registro
-
-1. Abre la aplicación
-2. Crea una cuenta con tu dirección pública de Stellar (G...)
-3. Ingresa tu nombre y avatar
-
-### 2. Importar Billetera
-
-1. Ve a "Mi cuenta"
-2. Importa tu clave privada (S...)
-3. La clave se guarda encriptada en tu navegador
-
-### 3. Configurar Passkey (Opcional)
-
-1. En "Mi cuenta" > "Seguridad"
-2. Click en "Configurar Passkey"
-3. Usa tu huella o FaceID
-
-### 4. Comprar Videos
-
-1. Navega por los videos disponibles
-2. Click en un video bloqueado
-3. Confirma el pago
-4. La transacción se ejecuta en Stellar
-5. El video se desbloquea automáticamente
+### Para Creadores
+1. Ve a "Subir Video"
+2. Ingresa el título y la URL del video
+3. Establece un precio en XLM
+4. Publica y monetiza
 
 ## 🔐 Seguridad
 
-### ⚠️ IMPORTANTE
+- Las claves privadas se guardan **encriptadas** en el navegador
+- Autenticación biométrica con **WebAuthn**
+- Transacciones firmadas localmente
+- Sin servidores centralizados para claves
 
-- **Testnet**: Esta aplicación usa Stellar Testnet (dinero de prueba)
-- **Clave Privada**: Se guarda encriptada (base64) en localStorage
-- **Producción**: Para uso real, implementa un sistema de custodia más robusto
-- **Passkey**: Es la forma más segura de autenticación
-
-### Mejores Prácticas
-
-1. Nunca compartas tu clave privada
-2. Usa Passkey cuando sea posible
-3. Verifica las transacciones en [Stellar Expert](https://stellar.expert/explorer/testnet)
-4. Mantén respaldos de tu clave privada
-
-## 🛠️ Desarrollo
-
-### Módulos JavaScript
-
-- **config.js**: URLs y configuración de red
-- **user-identity.js**: Registro y login de usuarios
-- **passkey-auth.js**: WebAuthn para autenticación biométrica
-- **stellar-wallet.js**: Interacción con Stellar (pagos, balance)
-- **video-manager.js**: CRUD de videos y compras
-- **ui-controller.js**: Actualización de interfaz
-
-### API Backend
+## 🛠️ Estructura del Proyecto
 
 ```
-GET  /api/videos          # Obtener todos los videos
-POST /api/videos/add      # Agregar nuevo video
-GET  /api/videos/rewards  # Obtener recompensas
+CryptostreamV2/
+├── backend/
+│   ├── config/          # Configuración de DB
+│   ├── controllers/     # Lógica de negocio
+│   ├── models/          # Modelos de MongoDB
+│   ├── routes/          # Rutas de API
+│   └── index.js         # Servidor principal
+├── frontend/
+│   └── public/
+│       ├── css/         # Estilos
+│       ├── js/          # Lógica del cliente
+│       ├── index.html   # Página de login
+│       └── video.html   # Dashboard principal
+└── contract-stellar/    # Contratos inteligentes (futuro)
 ```
 
-## 📝 Roadmap
+## 🌍 Variables de Entorno
 
-- [ ] Integración con IPFS (Pinata) para almacenamiento de videos
-- [ ] Sistema de comentarios
-- [ ] Likes y favoritos
-- [ ] Categorías y búsqueda
-- [ ] Notificaciones
-- [ ] Modo oscuro/claro
-- [ ] Soporte para Mainnet
+### Backend (.env)
+```env
+MONGODB_URI=mongodb+srv://...
+PORT=3000
+STELLAR_NETWORK=TESTNET
+```
 
-## 🤝 Contribuir
+### Frontend (config.js)
+```javascript
+BACKEND_URL_PROD: 'https://tu-backend.railway.app/api/videos'
+NETWORK: 'TESTNET'
+```
 
-Las contribuciones son bienvenidas! Por favor:
+## 📝 API Endpoints
 
-1. Fork el proyecto
-2. Crea una rama (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+### Videos
+- `GET /api/videos` - Obtener todos los videos
+- `POST /api/videos/add` - Agregar nuevo video
+- `DELETE /api/videos/:id` - Eliminar video
+- `GET /api/videos/rewards` - Obtener recompensas
+
+### Health Check
+- `GET /api/health` - Estado del servidor
+
+## 🎨 Personalización
+
+### Cambiar Red de Stellar
+En `frontend/public/js/config.js`:
+```javascript
+NETWORK: 'MAINNET'  // Cambiar de TESTNET a MAINNET
+```
+
+### Agregar Nuevas Categorías
+En `video.html`, modifica el input de categoría o crea un select.
+
+## 🐛 Troubleshooting
+
+### Error de CORS
+Asegúrate de que el backend tenga configurado:
+```javascript
+app.use(cors({ origin: '*' }));
+```
+
+### MongoDB no conecta
+Verifica que:
+1. La IP esté en la whitelist de MongoDB Atlas
+2. El usuario y contraseña sean correctos
+3. La URL de conexión esté bien formada
+
+### Videos no se guardan
+Verifica que:
+1. La URL sea válida (http:// o https://)
+2. El backend esté corriendo
+3. MongoDB esté conectado
 
 ## 📄 Licencia
 
-MIT License - ver archivo LICENSE
+MIT License - Ver `LICENSE` para más detalles
 
-## 🙏 Agradecimientos
+## 👥 Contribuir
 
-- [Stellar](https://stellar.org) - Blockchain de pagos
-- [Netlify](https://netlify.com) - Hosting del frontend
-- [Railway](https://railway.app) - Hosting del backend
+1. Fork el proyecto
+2. Crea una rama (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit tus cambios (`git commit -m 'Agregar nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Abre un Pull Request
 
 ## 📞 Soporte
 
-¿Problemas o preguntas? Abre un issue en GitHub.
+Si tienes problemas:
+1. Revisa `GUIA_DESPLIEGUE_COMPLETA.md`
+2. Abre un Issue en GitHub
+3. Contacta al equipo
+
+## 🎉 Créditos
+
+Desarrollado con ❤️ usando Stellar y MongoDB
 
 ---
 
-Hecho con ❤️ usando Stellar Blockchain
+**Nota**: Este proyecto está en fase de desarrollo. Úsalo bajo tu propio riesgo en producción.
