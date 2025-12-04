@@ -1,0 +1,14 @@
+/mnt/c/Users/User/Documents/Cryptostream/backend/cryptostream_contract/target/debug/deps/serde-27f4448c5e1b566c.d: /home/jorgel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /home/jorgel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /home/jorgel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /home/jorgel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /home/jorgel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /mnt/c/Users/User/Documents/Cryptostream/backend/cryptostream_contract/target/debug/build/serde-5e55967fd4a49097/out/private.rs
+
+/mnt/c/Users/User/Documents/Cryptostream/backend/cryptostream_contract/target/debug/deps/libserde-27f4448c5e1b566c.rlib: /home/jorgel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /home/jorgel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /home/jorgel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /home/jorgel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /home/jorgel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /mnt/c/Users/User/Documents/Cryptostream/backend/cryptostream_contract/target/debug/build/serde-5e55967fd4a49097/out/private.rs
+
+/mnt/c/Users/User/Documents/Cryptostream/backend/cryptostream_contract/target/debug/deps/libserde-27f4448c5e1b566c.rmeta: /home/jorgel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /home/jorgel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /home/jorgel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /home/jorgel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /home/jorgel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /mnt/c/Users/User/Documents/Cryptostream/backend/cryptostream_contract/target/debug/build/serde-5e55967fd4a49097/out/private.rs
+
+/home/jorgel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs:
+/home/jorgel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs:
+/home/jorgel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs:
+/home/jorgel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs:
+/home/jorgel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs:
+/mnt/c/Users/User/Documents/Cryptostream/backend/cryptostream_contract/target/debug/build/serde-5e55967fd4a49097/out/private.rs:
+
+# env-dep:OUT_DIR=/mnt/c/Users/User/Documents/Cryptostream/backend/cryptostream_contract/target/debug/build/serde-5e55967fd4a49097/out

@@ -1,0 +1,1 @@
+/mnt/c/Users/User/Documents/Cryptostream/backend/cryptostream_contract/target/wasm32-unknown-unknown/release/cryptostream_contract.wasm: /mnt/c/Users/User/Documents/Cryptostream/backend/cryptostream_contract/src/lib.rs

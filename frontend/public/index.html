@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoStream - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23, #1a1a3e);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 3rem;
+            border-radius: 20px;
+            border: 2px solid #667eea;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: #bbb;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .input {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 10px;
+            border: 2px solid #667eea;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .input::placeholder {
+            color: #888;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin-bottom: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .divider {
+            margin: 2rem 0;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #666;
+        }
+
+        .features {
+            text-align: left;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .features h3 {
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+        .features ul {
+            list-style: none;
+        }
+
+        .features li {
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(15, 15, 35, 0.95);
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            display: none;
+            z-index: 1000;
+            border-left: 4px solid #667eea;
+        }
+
+        .notification.success {
+            border-left-color: #27ae60;
+            color: #27ae60;
+        }
+
+        .notification.error {
+            border-left-color: #e74c3c;
+            color: #e74c3c;
+        }
+
+        .notification.info {
+            border-left-color: #3498db;
+            color: #3498db;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .link {
+            color: #667eea;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .link:hover {
+            color: #764ba2;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="logo">📺</div>
+        <h1>CRYPTOSTREAM</h1>
+        <p class="subtitle">Gana XLM viendo videos</p>
+
+        <!-- Login Form -->
+        <div id="loginForm">
+            <input type="text" id="loginPublicKey" class="input" placeholder="Tu dirección pública Stellar (G...)">
+            <button class="btn btn-primary" onclick="auth.login()">🔐 Iniciar Sesión</button>
+
+            <div class="divider">o</div>
+
+            <button class="btn btn-secondary" onclick="auth.showRegister()">✨ Crear Cuenta Nueva</button>
+        </div>
+
+        <!-- Register Form -->
+        <div id="registerForm" class="hidden">
+            <input type="text" id="registerName" class="input" placeholder="Tu nombre">
+            <input type="text" id="registerPublicKey" class="input" placeholder="Tu dirección pública Stellar (G...)">
+            <input type="text" id="registerAvatar" class="input" placeholder="Emoji avatar (ej: 🚀)" value="👤">
+            <textarea id="registerBio" class="input" placeholder="Biografía (opcional)" rows="3"></textarea>
+
+            <button class="btn btn-primary" onclick="auth.register()">🎉 Registrarse</button>
+            <button class="btn btn-secondary" onclick="auth.showLogin()">← Volver a Login</button>
+        </div>
+
+        <div class="features">
+            <h3>🌟 Características</h3>
+            <ul>
+                <li>💰 Pagos reales en Stellar (Testnet)</li>
+                <li>🔐 Autenticación con Passkey (biométrica)</li>
+                <li>🎬 Videos premium con blockchain</li>
+                <li>📱 Reels verticales</li>
+                <li>🌐 Sin intermediarios</li>
+            </ul>
+        </div>
+
+        <p style="margin-top: 2rem; color: #666; font-size: 0.9rem;">
+            ¿No tienes cuenta Stellar?
+            <a href="https://laboratory.stellar.org/#account-creator?network=test" target="_blank" class="link">
+                Créala aquí →
+            </a>
+        </p>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stellar-sdk/11.2.2/stellar-sdk.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/user-identity.js"></script>
+    <script src="js/passkey-auth.js"></script>
+
+    <script>
+        const auth = {
+            init() {
+                // Si ya está autenticado, redirigir al dashboard
+                if (UserIdentity.isAuthenticated()) {
+                    window.location.href = 'video.html';
+                }
+            },
+
+            showRegister() {
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('registerForm').classList.remove('hidden');
+            },
+
+            showLogin() {
+                document.getElementById('registerForm').classList.add('hidden');
+                document.getElementById('loginForm').classList.remove('hidden');
+            },
+
+            async login() {
+                const publicKey = document.getElementById('loginPublicKey').value.trim();
+
+                if (!publicKey) {
+                    this.notify('Por favor ingresa tu dirección pública', 'error');
+                    return;
+                }
+
+                if (!publicKey.startsWith('G') || publicKey.length !== 56) {
+                    this.notify('Dirección pública inválida (debe empezar con G y tener 56 caracteres)', 'error');
+                    return;
+                }
+
+                // Intentar login
+                const user = UserIdentity.login(publicKey);
+
+                if (user) {
+                    this.notify(`✅ Bienvenido de vuelta, ${user.name}!`, 'success');
+                    setTimeout(() => {
+                        window.location.href = 'video.html';
+                    }, 1000);
+                } else {
+                    this.notify('Usuario no encontrado. Por favor regístrate primero.', 'error');
+                }
+            },
+
+            async register() {
+                const name = document.getElementById('registerName').value.trim();
+                const publicKey = document.getElementById('registerPublicKey').value.trim();
+                const avatar = document.getElementById('registerAvatar').value.trim() || '👤';
+                const bio = document.getElementById('registerBio').value.trim();
+
+                // Validaciones
+                if (!name) {
+                    this.notify('Por favor ingresa tu nombre', 'error');
+                    return;
+                }
+
+                if (!publicKey) {
+                    this.notify('Por favor ingresa tu dirección pública', 'error');
+                    return;
+                }
+
+                if (!publicKey.startsWith('G') || publicKey.length !== 56) {
+                    this.notify('Dirección pública inválida (debe empezar con G y tener 56 caracteres)', 'error');
+                    return;
+                }
+
+                // Verificar si ya existe
+                const existingUser = UserIdentity.getUserByPublicKey(publicKey);
+                if (existingUser) {
+                    this.notify('Esta dirección ya está registrada. Usa "Iniciar Sesión".', 'error');
+                    return;
+                }
+
+                // Registrar
+                const user = UserIdentity.register(name, publicKey, avatar, bio);
+
+                this.notify(`✅ ¡Bienvenido, ${user.name}!`, 'success');
+
+                setTimeout(() => {
+                    window.location.href = 'video.html';
+                }, 1000);
+            },
+
+            notify(message, type = 'info') {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.className = `notification ${type}`;
+                notification.style.display = 'block';
+
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 4000);
+            }
+        };
+
+        // Iniciar
+        window.addEventListener('load', () => auth.init());
+    </script>
+</body>
+
+</html>
