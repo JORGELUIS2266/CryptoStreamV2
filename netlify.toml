@@ -1,11 +1,14 @@
 # Netlify configuration for CryptoStream dApp
 
 [build]
-  # Directorio a publicar
+  # Directorio base (raíz del proyecto)
+  base = "."
+  
+  # Directorio a publicar (relativo a la base)
   publish = "frontend/public"
   
-  # No hay comando de build porque es HTML/JS puro
-  command = "echo 'No build needed'"
+  # No hay comando de build
+  command = "# no build command"
 
 # Configuración para SPA routing
 [[redirects]]
