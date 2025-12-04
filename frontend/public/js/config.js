@@ -15,8 +15,10 @@ const Config = {
      * Obtener URL base de la API
      */
     getApiBaseUrl() {
-        // Si estamos en localhost, usar dev
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        // Si estamos en localhost o abriendo el archivo localmente
+        if (window.location.hostname === 'localhost' ||
+            window.location.hostname === '127.0.0.1' ||
+            window.location.protocol === 'file:') {
             return 'http://localhost:3000/api';
         }
         // En producción, usar prod (Railway)
