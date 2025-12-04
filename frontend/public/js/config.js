@@ -4,7 +4,7 @@
 const Config = {
     // URLs del backend
     BACKEND_URL_DEV: 'http://localhost:3000/api/videos',
-    BACKEND_URL_PROD: 'https://believable-playfulness-production.up.railway.app/api/videos', // Actualizar después del deploy
+    BACKEND_URL_PROD: 'https://cryptostreamv2-production.up.railway.app/api/videos', // Actualizar después del deploy
 
     // Stellar
     HORIZON_URL_TESTNET: 'https://horizon-testnet.stellar.org',
@@ -22,7 +22,7 @@ const Config = {
             return 'http://localhost:3000/api';
         }
         // En producción, usar prod (Railway)
-        return 'https://believable-playfulness-production.up.railway.app/api';
+        return 'https://cryptostreamv2-production.up.railway.app/api';
     },
 
     /**
